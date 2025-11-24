@@ -354,7 +354,7 @@ const handleAdd = async (e) => {
             </div>
             <h3 className="font-dot text-2xl text-white uppercase tracking-wider">System Access</h3>
           </div>
-          <form className="space-y-6" onSubmit={handleContactSubmit}>
+          <form className="space-y-6" onSubmit={handleLogin}>
             <div className="relative">
                 <input 
                 type="password" 
@@ -1063,28 +1063,57 @@ export default function App() {
           </div>
 
           <NothingCard className="max-w-2xl mx-auto backdrop-blur-3xl bg-white/50 dark:bg-zinc-900/50">
-            <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-mono uppercase tracking-widest text-zinc-500">Identity</label>
-                  <input type="text" placeholder="NAME" className="w-full bg-transparent border-b border-zinc-300 dark:border-zinc-700 py-2 text-xl font-dot outline-none focus:border-red-600 transition-colors" />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-mono uppercase tracking-widest text-zinc-500">Signal</label>
-                  <input type="email" placeholder="EMAIL" className="w-full bg-transparent border-b border-zinc-300 dark:border-zinc-700 py-2 text-xl font-dot outline-none focus:border-red-600 transition-colors" />
-                </div>
-              </div>
-              <div className="space-y-2 pt-4">
-                  <label className="text-[10px] font-mono uppercase tracking-widest text-zinc-500">Transmission</label>
-                  <textarea rows={4} placeholder="ENTER MESSAGE..." className="w-full bg-transparent border-b border-zinc-300 dark:border-zinc-700 py-2 text-sm font-sans outline-none focus:border-red-600 transition-colors resize-none" />
-              </div>
-              
-              <div className="flex justify-end pt-4">
-                <button className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-full font-dot uppercase tracking-wider text-sm transition-all hover:px-10 flex items-center gap-2">
-                   Send Data <ArrowRight size={16} />
-                </button>
-              </div>
-            </form>
+            <form className="space-y-6" onSubmit={handleContactSubmit}>
+  <div className="grid md:grid-cols-2 gap-6">
+    <div className="space-y-2">
+      <label className="text-[10px] font-mono uppercase tracking-widest text-zinc-500">Identity</label>
+      {/* ADDED value and onChange */}
+      <input 
+        required
+        type="text" 
+        placeholder="NAME" 
+        value={contactForm.name}
+        onChange={(e) => setContactForm({...contactForm, name: e.target.value})}
+        className="w-full bg-transparent border-b border-zinc-300 dark:border-zinc-700 py-2 text-xl font-dot outline-none focus:border-red-600 transition-colors" 
+      />
+    </div>
+    <div className="space-y-2">
+      <label className="text-[10px] font-mono uppercase tracking-widest text-zinc-500">Signal</label>
+      {/* ADDED value and onChange */}
+      <input 
+        required
+        type="email" 
+        placeholder="EMAIL" 
+        value={contactForm.email}
+        onChange={(e) => setContactForm({...contactForm, email: e.target.value})}
+        className="w-full bg-transparent border-b border-zinc-300 dark:border-zinc-700 py-2 text-xl font-dot outline-none focus:border-red-600 transition-colors" 
+      />
+    </div>
+  </div>
+  <div className="space-y-2 pt-4">
+      <label className="text-[10px] font-mono uppercase tracking-widest text-zinc-500">Transmission</label>
+      {/* ADDED value and onChange */}
+      <textarea 
+        required
+        rows={4} 
+        placeholder="ENTER MESSAGE..." 
+        value={contactForm.message}
+        onChange={(e) => setContactForm({...contactForm, message: e.target.value})}
+        className="w-full bg-transparent border-b border-zinc-300 dark:border-zinc-700 py-2 text-sm font-sans outline-none focus:border-red-600 transition-colors resize-none" 
+      />
+  </div>
+  
+  <div className="flex justify-end pt-4">
+    {/* ADDED disabled state and loading text */}
+    <button 
+      type="submit" 
+      disabled={isSending}
+      className="bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white px-8 py-3 rounded-full font-dot uppercase tracking-wider text-sm transition-all hover:px-10 flex items-center gap-2"
+    >
+       {isSending ? 'Transmitting...' : 'Send Data'} <ArrowRight size={16} />
+    </button>
+  </div>
+</form>
           </NothingCard>
 
           <div className="mt-16 flex justify-center gap-8">
