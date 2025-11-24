@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { flushSync } from "react-dom";
+import emailjs from '@emailjs/browser';
 import HeroImage from './hero-character.png';
 import {
   Github, Linkedin, Mail, Twitter, Code2, User, Moon, Sun, Home,
@@ -353,7 +354,7 @@ const handleAdd = async (e) => {
             </div>
             <h3 className="font-dot text-2xl text-white uppercase tracking-wider">System Access</h3>
           </div>
-          <form onSubmit={handleLogin} className="space-y-6">
+          <form className="space-y-6" onSubmit={handleContactSubmit}>
             <div className="relative">
                 <input 
                 type="password" 
@@ -859,6 +860,46 @@ export default function App() {
     { id: 'projects', label: 'Work', href: '#projects' },
     { id: 'contact', label: 'Connect', href: '#contact' },
   ];
+
+  // 1. Contact Form State
+  const [contactForm, setContactForm] = useState({ name: '', email: '', message: '' });
+  const [isSending, setIsSending] = useState(false);
+
+  // 2. The Missing Function
+  const handleContactSubmit = async (e) => {
+    e.preventDefault();
+    setIsSending(true);
+
+    try {
+      // Send Email via EmailJS
+      await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        {
+          name: contactForm.name,
+          email: contactForm.email,
+          message: contactForm.message,
+        },
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+      );
+
+      // (Optional) Save to Supabase as backup
+      const { error } = await supabase
+        .from('contact_messages')
+        .insert([contactForm]);
+
+      if (error) console.error("Database log failed, but email sent.");
+
+      alert("Transmission Received. Check your inbox!");
+      setContactForm({ name: '', email: '', message: '' }); // Clear form
+
+    } catch (error) {
+      console.error('Error sending message:', error);
+      alert("Transmission Failed. Please try again.");
+    } finally {
+      setIsSending(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-nothing-light-grey dark:bg-nothing-dark-grey text-zinc-900 dark:text-zinc-100 font-sans transition-colors duration-500 overflow-x-hidden">
