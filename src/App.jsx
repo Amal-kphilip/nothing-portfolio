@@ -9,9 +9,8 @@ import {
 import { createClient } from '@supabase/supabase-js'
 
 // Initialize Supabase client - REPLACE WITH YOUR ACTUAL CREDENTIALS
-const supabaseUrl = 'https://jdaqnzlhxyfbltbxligf.supabase.co'  // Replace with your actual URL
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpkYXFuemxoeHlmYmx0YnhsaWdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM5NDUwMTEsImV4cCI6MjA3OTUyMTAxMX0.MbVi316qvV1ZKzKLfp1DD70casivxnwbRcem3e5hP00'       // Replace with your actual anon key
-
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_KEY
 const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
 // Utility function - ONLY DEFINED ONCE
@@ -254,9 +253,10 @@ const ProjectManager = ({ onClose }) => {
     }
   };
 
-  const handleLogin = (e) => {
+const handleLogin = (e) => {
     e.preventDefault();
-    if (passwordInput === 'admin123') {
+    // Compare input against the environment variable
+    if (passwordInput === import.meta.env.VITE_ADMIN_PASSWORD) {
       setIsAuthenticated(true);
       setAuthError(false);
     } else {
