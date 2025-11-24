@@ -178,14 +178,15 @@ const NothingCard = ({ className, children, ...props }) => (
 );
 
 const SectionHeader = ({ title, subtitle }) => (
-  <div className="mb-12 relative inline-block">
-    <h2 className="text-4xl md:text-5xl font-dot uppercase font-bold text-black dark:text-white mb-2 relative z-10">
+  <div className="mb-12 relative inline-block max-w-full">
+    {/* FIXED: Smaller text on mobile (text-3xl) and whitespace-nowrap to prevent wrapping */}
+    <h2 className="text-3xl md:text-5xl font-dot uppercase font-bold text-black dark:text-white mb-2 relative z-10 whitespace-nowrap">
       {title}
     </h2>
     <div className="h-1 w-full bg-red-600 mb-2 transform origin-left scale-x-50 transition-transform hover:scale-x-100" />
-    <p className="text-zinc-500 font-mono text-sm uppercase tracking-widest">{subtitle}</p>
-    {/* Decorative dots */}
-    <div className="absolute -right-8 -top-4 flex gap-1">
+    <p className="text-zinc-500 font-mono text-xs md:text-sm uppercase tracking-widest truncate">{subtitle}</p>
+    
+    <div className="absolute -right-8 -top-4 flex gap-1 hidden md:flex">
       <div className="w-2 h-2 rounded-full bg-zinc-300 dark:bg-zinc-700" />
       <div className="w-2 h-2 rounded-full bg-zinc-300 dark:bg-zinc-700" />
       <div className="w-2 h-2 rounded-full bg-red-600 animate-pulse" />
@@ -662,7 +663,8 @@ const DynamicNavigation = ({
   return (
     <nav
       className={cn(
-        "fixed top-6 left-1/2 -translate-x-1/2 z-50 rounded-full backdrop-blur-xl transition-all duration-300 p-1 flex items-center",
+        // FIXED: Added width constraints and adjusted positioning
+        "fixed top-6 left-1/2 -translate-x-1/2 z-50 rounded-full backdrop-blur-xl transition-all duration-300 p-1 flex items-center max-w-[95vw]",
         "bg-white/60 dark:bg-black/60 border border-zinc-300 dark:border-zinc-800 shadow-lg",
         className
       )}
@@ -679,8 +681,9 @@ const DynamicNavigation = ({
                   if (onLinkClick) onLinkClick(link.id);
                 }}
                 className={cn(
-                  "flex gap-1 items-center justify-center px-6 py-2.5 text-xs font-dot font-bold uppercase tracking-wider rounded-full transition-all duration-200",
-                  // FIXED: Static Active State (Red BG + White Text) vs Inactive State
+                  // FIXED: Responsive padding (px-3 on mobile, px-6 on desktop)
+                  // FIXED: Responsive text size (text-[10px] on mobile)
+                  "flex gap-1 items-center justify-center px-3 md:px-6 py-2 md:py-2.5 text-[10px] md:text-xs font-dot font-bold uppercase tracking-wider rounded-full transition-all duration-200",
                   isActive
                     ? "bg-red-600 text-white shadow-md"
                     : "text-zinc-600 dark:text-zinc-400 hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10"
@@ -752,7 +755,8 @@ const ThemeToggle = ({ duration = 400 }) => {
     <button 
       ref={buttonRef}
       onClick={toggle}
-      className="fixed top-6 right-6 z-50 w-12 h-12 rounded-full border border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-black/50 backdrop-blur flex items-center justify-center hover:scale-105 transition-transform text-zinc-800 dark:text-white"
+      // FIXED: 'bottom-6' on mobile, 'top-6' on desktop (md)
+      className="fixed bottom-6 right-6 md:top-6 md:right-6 z-50 w-12 h-12 rounded-full border border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-black/80 backdrop-blur flex items-center justify-center hover:scale-105 transition-transform text-zinc-800 dark:text-white shadow-lg"
     >
       {isDark ? <Sun size={20} /> : <Moon size={20} />}
     </button>
@@ -875,83 +879,81 @@ export default function App() {
       
       <ThemeToggle />
 
-      {/* --- HERO SECTION --- */}
-      <section id="home" className="min-h-screen relative flex flex-col justify-center items-center px-6 pt-20 z-10">
-        <div className="max-w-5xl w-full grid md:grid-cols-12 gap-6 items-center">
+{/* --- HERO SECTION (Updated for Mobile) --- */}
+<section id="home" className="min-h-screen relative flex flex-col justify-center items-center px-6 pt-24 md:pt-20 z-10">
+  <div className="max-w-5xl w-full grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-6 items-center">
+    
+    {/* Left Text Block */}
+    <div className="md:col-span-8 flex flex-col justify-center space-y-6 md:space-y-8 order-2 md:order-1">
+      <div className="inline-flex items-center gap-2 border border-red-600/30 bg-red-600/10 px-3 py-1 rounded-full w-fit">
+        <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse" />
+        <span className="text-xs font-mono text-red-600 font-bold tracking-wider">SYSTEM ONLINE</span>
+      </div>
+
+      <div className="space-y-2">
+        {/* FIXED: text-5xl on mobile, text-9xl on desktop */}
+        <h1 className="text-5xl md:text-9xl font-dot font-bold text-black dark:text-white uppercase tracking-tighter leading-[0.9] md:leading-[0.8]">
+          Nothing<br/>
+          <span className="text-zinc-400 dark:text-zinc-600 glitch-hover">Generic</span>
+        </h1>
+      </div>
+
+      <p className="text-base md:text-xl max-w-xl text-zinc-600 dark:text-zinc-400 leading-relaxed font-light">
+        Designing digital interfaces with raw precision. 
+        <span className="block mt-2 font-mono text-xs uppercase tracking-widest text-zinc-500">
+          // Full Stack Developer _ React _ Next.js
+        </span>
+      </p>
+
+      <div className="flex flex-wrap gap-4 pt-4">
+        <NothingButton active onClick={() => document.getElementById('projects').scrollIntoView({ behavior: 'smooth' })}>
+          Explore Work
+        </NothingButton>
+        <NothingButton onClick={() => document.getElementById('contact').scrollIntoView({ behavior: 'smooth' })}>
+          Contact
+        </NothingButton>
+      </div>
+    </div>
+
+    {/* Right Decorative Block (3D Card) */}
+    {/* FIXED: Removed 'hidden'. Added 'mt-4' for spacing on mobile. Added 'order-1' so it stays consistent. */}
+    <div className="col-span-1 md:col-span-4 flex justify-center relative mt-4 md:mt-0 order-1 md:order-2">
+       {/* FIXED: scale-90 on mobile so it fits narrow screens */}
+       <div className="scale-90 md:scale-100 w-64 h-96 border-2 border-zinc-300 dark:border-zinc-800 rounded-[3rem] relative overflow-hidden flex flex-col justify-between p-6 bg-zinc-100 dark:bg-black shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500">
           
-          {/* Left Text Block */}
-          <div className="md:col-span-8 flex flex-col justify-center space-y-8">
-            <div className="inline-flex items-center gap-2 border border-red-600/30 bg-red-600/10 px-3 py-1 rounded-full w-fit">
-              <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse" />
-              <span className="text-xs font-mono text-red-600 font-bold tracking-wider">SYSTEM ONLINE</span>
-            </div>
-
-            <div className="space-y-2">
-              <h1 className="text-7xl md:text-9xl font-dot font-bold text-black dark:text-white uppercase tracking-tighter leading-[0.8]">
-                Nothing<br/>
-                <span className="text-zinc-400 dark:text-zinc-600 glitch-hover">Generic</span>
-              </h1>
-            </div>
-
-            <p className="text-lg md:text-xl max-w-xl text-zinc-600 dark:text-zinc-400 leading-relaxed font-light">
-              Designing digital interfaces with raw precision. 
-              <span className="block mt-2 font-mono text-xs uppercase tracking-widest text-zinc-500">
-                // Full Stack Developer _ React _ Next.js
-              </span>
-            </p>
-
-            <div className="flex flex-wrap gap-4 pt-4">
-              <NothingButton active onClick={() => document.getElementById('projects').scrollIntoView({ behavior: 'smooth' })}>
-                Explore Work
-              </NothingButton>
-              <NothingButton onClick={() => document.getElementById('contact').scrollIntoView({ behavior: 'smooth' })}>
-                Contact
-              </NothingButton>
-            </div>
+          {/* Background Image Layer */}
+          <div className="absolute inset-0 z-0">
+            <img 
+              src={HeroImage} 
+              alt="Avatar" 
+              className="w-full h-full object-cover" 
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
           </div>
 
-          {/* Right Decorative Block - Full Fill Version */}
-<div className="hidden md:flex md:col-span-4 justify-center relative">
-   <div className="w-64 h-96 border-2 border-zinc-300 dark:border-zinc-800 rounded-[3rem] relative overflow-hidden flex flex-col justify-between p-6 bg-zinc-100 dark:bg-black shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500">
-      
-      {/* 1. BACKGROUND IMAGE (Fills the card completely) */}
-      <div className="absolute inset-0 z-0">
-        <img 
-          src={HeroImage} 
-          alt="Avatar" 
-          className="w-full h-full object-cover" 
-        />
-        {/* Optional: Dark gradient overlay so text remains readable */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-      </div>
+          {/* Card UI Elements (Overlay) */}
+          <div className="flex justify-between items-center relative z-20">
+             <div className="text-[10px] font-mono bg-black/20 backdrop-blur-md text-white px-2 py-0.5 rounded-full">57°08'N</div>
+             <Battery size={16} className="text-white drop-shadow-md" />
+          </div>
 
-      {/* 2. HEADER (Relative z-20 to sit ON TOP of image) */}
-      <div className="flex justify-between items-center relative z-20">
-         <div className="text-[10px] font-mono bg-black/20 backdrop-blur-md text-white px-2 py-0.5 rounded-full">57°08'N</div>
-         <Battery size={16} className="text-white drop-shadow-md" />
-      </div>
+          <div className="flex flex-col items-center justify-end flex-1 pb-4 relative z-20">
+              <div className="font-dot text-3xl uppercase text-white drop-shadow-lg tracking-wider">Alex</div>
+              <div className="text-xs text-zinc-300 font-mono bg-black/30 px-2 rounded backdrop-blur-md">Dev_Unit_01</div>
+          </div>
 
-      {/* 3. NAME & INFO (Pushed to bottom, white text for contrast) */}
-      <div className="flex flex-col items-center justify-end flex-1 pb-4 relative z-20">
-          <div className="font-dot text-3xl uppercase text-white drop-shadow-lg tracking-wider">Alex</div>
-          <div className="text-xs text-zinc-300 font-mono bg-black/30 px-2 rounded backdrop-blur-md">Dev_Unit_01</div>
-      </div>
+          <div className="flex justify-between text-xs font-mono text-zinc-400 relative z-20">
+             <span>ID: 8842</span>
+             <Wifi size={14} className="text-white" />
+          </div>
 
-      {/* 4. FOOTER */}
-      <div className="flex justify-between text-xs font-mono text-zinc-400 relative z-20">
-         <span>ID: 8842</span>
-         <Wifi size={14} className="text-white" />
-      </div>
-
-      {/* Glass Reflection */}
-      <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent pointer-events-none z-30" />
-   </div>
-   
-   {/* Red Glow Behind Card */}
-   <div className="absolute inset-0 bg-red-600/20 blur-[80px] -z-10 rounded-full" />
-</div>
-        </div>
-      </section>
+          <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent pointer-events-none z-30" />
+       </div>
+       
+       <div className="absolute inset-0 bg-red-600/20 blur-[80px] -z-10 rounded-full" />
+    </div>
+  </div>
+</section>
 
       {/* --- ABOUT SECTION --- */}
       <section id="about" className="py-32 px-6 relative z-10 bg-white dark:bg-zinc-950 border-y border-zinc-200 dark:border-zinc-900">
