@@ -3,7 +3,7 @@ import { flushSync } from "react-dom";
 import emailjs from '@emailjs/browser';
 import HeroImage from './hero-character.png';
 import {
-  Github, Linkedin, Mail, Twitter, Code2, User, Moon, Sun, Home,
+  Github, Linkedin, Mail, Instagram, Code2, User, Moon, Sun, Home,
   UserCircle, Briefcase, MessageSquare, ChevronLeft, ChevronRight, ArrowRight, Plus,
   Trash2, X, Loader2, Lock, Upload, Image as ImageIcon, Cpu, Radio, Battery, Wifi
 } from "lucide-react";
@@ -148,6 +148,19 @@ const GlobalStyles = () => (
       color-scheme: dark;
     }
   `}</style>
+);
+// Custom X (formerly Twitter) Logo Component
+const XIcon = ({ size = 20, className }) => (
+  <svg 
+    width={size} 
+    height={size} 
+    viewBox="0 0 24 24" 
+    fill="currentColor" 
+    className={className}
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />
+  </svg>
 );
 
 const NothingButton = ({ children, onClick, active, className, ...props }) => (
@@ -981,7 +994,7 @@ const handleContactSubmit = async (e) => {
           </div>
 
           <div className="flex flex-col items-center justify-end flex-1 pb-4 relative z-20">
-              <div className="font-dot text-3xl uppercase text-white drop-shadow-lg tracking-wider">Alex</div>
+              <div className="font-dot text-3xl uppercase text-white drop-shadow-lg tracking-wider">Amal</div>
               <div className="text-xs text-zinc-300 font-mono bg-black/30 px-2 rounded backdrop-blur-md">Dev_Unit_01</div>
           </div>
 
@@ -1126,14 +1139,27 @@ const handleContactSubmit = async (e) => {
 </form>
           </NothingCard>
 
-          <div className="mt-16 flex justify-center gap-8">
-            {[Github, Twitter, Linkedin, Mail].map((Icon, i) => (
-              <a key={i} href="#" className="group relative p-4 border border-zinc-300 dark:border-zinc-800 rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors">
-                 <Icon size={20} className="text-zinc-600 dark:text-zinc-400 group-hover:text-black dark:group-hover:text-white" />
-                 <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
-              </a>
-            ))}
-          </div>
+          {/* Social Links Container */}
+<div className="mt-16 flex justify-center gap-8">
+  {[
+    { Icon: Github, link: "https://github.com/Amal-kphilip" },
+    { Icon: XIcon, link: "https://x.com/AmalkPhilip" },
+    { Icon: Linkedin, link: "https://www.linkedin.com/in/amal-k-philip" },
+    { Icon: Instagram, link: "https://instagram.com/amalkp29" }, // <--- NEW LINE
+    { Icon: Mail, link: "mailto:amalkphilip2005@gmail.com" }
+  ].map(({ Icon, link }, i) => (
+    <a 
+      key={i} 
+      href={link} 
+      target="_blank" 
+      rel="noopener noreferrer"
+      className="group relative p-4 border border-zinc-300 dark:border-zinc-800 rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors"
+    >
+       <Icon size={20} className="text-zinc-600 dark:text-zinc-400 group-hover:text-black dark:group-hover:text-white" />
+       <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+    </a>
+  ))}
+</div>
         </div>
       </section>
 
@@ -1145,7 +1171,7 @@ const handleContactSubmit = async (e) => {
             onDoubleClick={() => setShowAdmin(true)}
             className="text-[10px] font-mono uppercase tracking-widest text-zinc-500 cursor-pointer select-none hover:text-red-600 transition-colors"
           >
-            System Status: Normal • © {new Date().getFullYear()} Alex.Dev
+            System Status: Normal • © {new Date().getFullYear()} Amal.Dev
           </p>
         </div>
       </footer>
