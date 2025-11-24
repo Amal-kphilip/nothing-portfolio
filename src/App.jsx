@@ -864,42 +864,44 @@ export default function App() {
   // 1. Contact Form State
   const [contactForm, setContactForm] = useState({ name: '', email: '', message: '' });
   const [isSending, setIsSending] = useState(false);
+  const [successMsg, setSuccessMsg] = useState('');
 
   // 2. The Missing Function
-  const handleContactSubmit = async (e) => {
-    e.preventDefault();
-    setIsSending(true);
+const handleContactSubmit = async (e) => {
+  e.preventDefault();
+  setIsSending(true);
+  setSuccessMsg(""); // Reset message
 
-    try {
-      // Send Email via EmailJS
-      await emailjs.send(
-        import.meta.env.VITE_EMAILJS_SERVICE_ID,
-        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
-        {
-          name: contactForm.name,
-          email: contactForm.email,
-          message: contactForm.message,
-        },
-        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
-      );
+  try {
+    await emailjs.send(
+      import.meta.env.VITE_EMAILJS_SERVICE_ID,
+      import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+      {
+        name: contactForm.name,
+        email: contactForm.email,
+        message: contactForm.message,
+      },
+      import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+    );
 
-      // (Optional) Save to Supabase as backup
-      const { error } = await supabase
-        .from('contact_messages')
-        .insert([contactForm]);
+    // Backup to Supabase
+    const { error } = await supabase.from('contact_messages').insert([contactForm]);
+    if (error) console.error("Database log failed");
 
-      if (error) console.error("Database log failed, but email sent.");
+    // REPLACED ALERT WITH THIS:
+    setSuccessMsg("TRANSMISSION SUCCESSFUL. I WILL BE IN TOUCH."); 
+    setContactForm({ name: '', email: '', message: '' }); // Clear form
+    
+    // Hide message after 5 seconds
+    setTimeout(() => setSuccessMsg(""), 5000);
 
-      alert("Transmission Received. Check your inbox!");
-      setContactForm({ name: '', email: '', message: '' }); // Clear form
-
-    } catch (error) {
-      console.error('Error sending message:', error);
-      alert("Transmission Failed. Please try again.");
-    } finally {
-      setIsSending(false);
-    }
-  };
+  } catch (error) {
+    console.error('Error:', error);
+    setSuccessMsg("TRANSMISSION FAILED. PLEASE TRY AGAIN."); // Show error in UI
+  } finally {
+    setIsSending(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-nothing-light-grey dark:bg-nothing-dark-grey text-zinc-900 dark:text-zinc-100 font-sans transition-colors duration-500 overflow-x-hidden">
@@ -1102,6 +1104,14 @@ export default function App() {
         className="w-full bg-transparent border-b border-zinc-300 dark:border-zinc-700 py-2 text-sm font-sans outline-none focus:border-red-600 transition-colors resize-none" 
       />
   </div>
+
+  {successMsg && (
+  <div className="text-center py-2">
+    <p className={`font-mono text-[10px] uppercase tracking-widest ${successMsg.includes('FAILED') ? 'text-red-500' : 'text-green-500 animate-pulse'}`}>
+       {successMsg}
+    </p>
+  </div>
+)}
   
   <div className="flex justify-end pt-4">
     {/* ADDED disabled state and loading text */}
