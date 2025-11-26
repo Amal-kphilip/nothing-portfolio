@@ -1,0 +1,14 @@
+name: Keep Supabase Alive
+on:
+  schedule:
+    # Runs at 00:00 UTC every day
+    - cron: '0 0 * * *'
+  workflow_dispatch: 
+
+jobs:
+  ping-site:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Portfolio
+     
+        run: curl -I https://nothing-portfolio.vercel.app/
