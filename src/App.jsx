@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { flushSync } from "react-dom";
-import emailjs from '@emailjs/browser';
-import HeroImage from './hero-character.png'; 
+import emailjs from '@emailjs/browser'; 
 import {
   Github, Linkedin, Mail, Instagram, Sun, Moon,
-  ArrowRight, Radio, Battery, Wifi, Cpu, ChevronLeft, ChevronRight
+  ArrowRight, Radio, Battery, Wifi, Cpu, ChevronLeft, ChevronRight, Loader2
 } from "lucide-react";
 import { createClient } from '@supabase/supabase-js'
 
@@ -163,6 +162,7 @@ export default function App() {
   const [projects, setProjects] = useState([]); 
   const [time, setTime] = useState(new Date().toLocaleTimeString());
   const [heroOverride, setHeroOverride] = useState(null);
+  const [isHeroLoading, setIsHeroLoading] = useState(true);
 
   useEffect(() => { const timer = setInterval(() => setTime(new Date().toLocaleTimeString()), 1000); return () => clearInterval(timer); }, []);
 
@@ -173,6 +173,8 @@ export default function App() {
        if(p) setProjects(p);
        const { data: h } = await supabase.from('site_config').select('value').eq('key', 'hero_image').single();
        if(h) setHeroOverride(h.value);
+
+       setIsHeroLoading(false);
     };
     fetchAll();
     const sub1 = supabase.channel('public_projects').on('postgres_changes', { event: '*', schema: 'public', table: 'portfolio_projects' }, () => fetchAll()).subscribe();
@@ -217,7 +219,30 @@ export default function App() {
           </div>
           <div className="col-span-1 md:col-span-4 flex justify-center relative mt-4 md:mt-0 order-1 md:order-2">
              <div className="scale-90 md:scale-100 w-64 h-96 border-2 border-zinc-300 dark:border-zinc-800 rounded-[3rem] relative overflow-hidden flex flex-col justify-between p-6 bg-zinc-100 dark:bg-black shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500">
-                <div className="absolute inset-0 z-0"><img src={heroOverride || HeroImage} alt="Avatar" className="w-full h-full object-cover" /><div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" /></div>
+                {/* Background Image Layer */}
+<div className="absolute inset-0 z-0">
+  {isHeroLoading ? (
+    // STATE 1: LOADING (Spinner)
+    <div className="w-full h-full bg-zinc-200 dark:bg-zinc-900 flex items-center justify-center">
+      <Loader2 className="animate-spin text-zinc-400" size={32} />
+    </div>
+  ) : heroOverride ? (
+    // STATE 2: SUCCESS (Database Image)
+    <img 
+      src={heroOverride} 
+      alt="Avatar" 
+      className="w-full h-full object-cover" 
+    />
+  ) : (
+    // STATE 3: EMPTY DATABASE (Placeholder Icon)
+    <div className="w-full h-full bg-zinc-200 dark:bg-zinc-900 flex items-center justify-center">
+      <UserCircle className="text-zinc-400" size={64} />
+    </div>
+  )}
+  
+  {/* Gradient Overlay */}
+  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+</div>
                 <div className="flex justify-between items-center relative z-20"><div className="text-[10px] font-mono bg-black/20 backdrop-blur-md text-white px-2 py-0.5 rounded-full">57°08'N</div><Battery size={16} className="text-white drop-shadow-md" /></div>
                 <div className="flex flex-col items-center justify-end flex-1 pb-4 relative z-20"><div className="font-dot text-3xl uppercase text-white drop-shadow-lg tracking-wider">Amal</div><div className="text-xs text-zinc-300 font-mono bg-black/30 px-2 rounded backdrop-blur-md">Dev_Unit_01</div></div>
                 <div className="flex justify-between text-xs font-mono text-zinc-400 relative z-20"><span>ID: 8842</span><Wifi size={14} className="text-white" /></div>
